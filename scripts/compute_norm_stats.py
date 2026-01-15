@@ -85,6 +85,29 @@ def create_rlds_dataloader(
     )
     return data_loader, num_batches
 
+def print_tree(x, prefix=""):
+    if isinstance(x, dict):
+        for k, v in x.items():
+            print(f"{prefix}{k}: {type(v)}")
+            print_tree(v, prefix + "  ")
+    elif hasattr(x, "shape"):
+        print(f"{prefix}shape={x.shape}, dtype={getattr(x, 'dtype', None)}")
+    else:
+        print(f"{prefix}{type(x)}")
+
+def print_batch(data_loader):
+    data_iter = iter(data_loader)
+    batch = next(data_iter)
+    print_tree(batch)
+    # print("state:", batch['state'][2])
+    # print("actions:", batch['actions'][2][0])
+    # print("actions:", batch['actions'][2][1])
+    img = batch["image"]["base_0_rgb"]
+    print("----- base_0_rgb -----")
+    print("dtype:", img.dtype)
+    print("shape:", img.shape)
+    print("min:", img.min())
+    print("max:", img.max())
 
 def main(config_name: str, max_frames: int | None = None):
     config = _config.get_config(config_name)
@@ -99,6 +122,8 @@ def main(config_name: str, max_frames: int | None = None):
             data_config, config.model.action_horizon, config.batch_size, config.model, config.num_workers, max_frames
         )
 
+    print_batch(data_loader)
+    
     keys = ["state", "actions"]
     stats = {key: normalize.RunningStats() for key in keys}
 
