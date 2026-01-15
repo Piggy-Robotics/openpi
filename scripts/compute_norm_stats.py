@@ -47,6 +47,8 @@ def create_torch_dataloader(
     else:
         num_batches = len(dataset) // batch_size
         shuffle = False
+    print("len(dataset): ", len(dataset))
+    print("num_batches: ", num_batches)
     data_loader = _data_loader.TorchDataLoader(
         dataset,
         local_batch_size=batch_size,
@@ -99,9 +101,9 @@ def print_batch(data_loader):
     data_iter = iter(data_loader)
     batch = next(data_iter)
     print_tree(batch)
-    # print("state:", batch['state'][2])
-    # print("actions:", batch['actions'][2][0])
-    # print("actions:", batch['actions'][2][1])
+    print("state:", batch['state'][2])
+    print("actions:", batch['actions'][2][0])
+    print("actions:", batch['actions'][2][1])
     img = batch["image"]["base_0_rgb"]
     print("----- base_0_rgb -----")
     print("dtype:", img.dtype)
