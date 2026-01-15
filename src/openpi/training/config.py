@@ -968,6 +968,30 @@ _CONFIGS = [
     # RoboArena & PolaRiS configs.
     *roboarena_config.get_roboarena_configs(),
     *polaris_config.get_polaris_configs(),
+    
+    # Personal Config
+
+    # Lora Fine-tune on Aloha Sim Env with "lerobot/aloha_sim_insertion_scripted" Dataset
+    TrainConfig(
+        name="pi0_aloha_sim_low_mem_finetune",
+        model=pi0_config.Pi0Config(paligemma_variant="gemma_2b_lora", action_expert_variant="gemma_300m_lora"),
+        batch_size=16,
+        resume=True,
+        data=LeRobotAlohaDataConfig(
+            repo_id="lerobot/aloha_sim_insertion_scripted",
+            default_prompt="Insert the peg into the socket.",
+            use_delta_joint_actions=False,
+        ),
+        weight_loader=weight_loaders.CheckpointWeightLoader("gs://openpi-assets/checkpoints/pi0_base/params"),
+        num_train_steps=10_000,
+        # The freeze filter defines which parameters should be frozen during training.
+        freeze_filter=pi0_config.Pi0Config(
+            paligemma_variant="gemma_2b_lora", action_expert_variant="gemma_300m_lora"
+        ).get_freeze_filter(),
+
+        # Turn off EMA for LoRA finetuning.
+        ema_decay=None,
+    ),
 ]
 
 if len({config.name for config in _CONFIGS}) != len(_CONFIGS):
