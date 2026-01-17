@@ -1045,14 +1045,15 @@ _CONFIGS = [
     # Lora Fine-tune on OpenArm Env with our own Dataset
     TrainConfig(
         name="pi0_openarm_lora_fine_tune",
-        batch_size=16,  # For 3 cameras on L4 GPU (more memory)
+        batch_size=16,                                                                                                          # BATCH_SIZE
+        resume=True,                                                                                                            # RESUME
         model=pi0_config.Pi0Config(paligemma_variant="gemma_2b_lora", action_expert_variant="gemma_300m_lora"),
         data=LeRobotOpenArmDataConfig(
-            repo_id="S3_PiggyArmDataset/put_the_tennis_ball_into_box",
+            repo_id="S3_PiggyArmDataset/put_the_tennis_ball_into_box_0116",                                                     # DATASET
             base_config=DataConfig(prompt_from_task=True),
         ),
-        weight_loader=weight_loaders.CheckpointWeightLoader("gs://openpi-assets/checkpoints/pi0_base/params"),
-        num_train_steps=5_000,
+        weight_loader=weight_loaders.CheckpointWeightLoader("checkpoints/pi0_openarm_lora_fine_tune/Put_tennis/6999/params"),   # CHECKPOINT：*/params
+        num_train_steps=10_000,                                                                                                 # STEP
         freeze_filter=pi0_config.Pi0Config(
             paligemma_variant="gemma_2b_lora",
             action_expert_variant="gemma_300m_lora",
