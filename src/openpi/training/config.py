@@ -1042,18 +1042,37 @@ _CONFIGS = [
         ema_decay=None,
     ),
 
-    # Lora Fine-tune on OpenArm Env with our own Dataset
+    # Lora Fine-tune on PiggyArm Env with our own Dataset
     TrainConfig(
-        name="pi0_openarm_lora_fine_tune",
+        name="pi0_openarm_lora_fine_tune_final",
         batch_size=16,                                                                                                          # BATCH_SIZE
-        resume=True,                                                                                                            # RESUME
+        # resume=True,                                                                                                          # RESUME
         model=pi0_config.Pi0Config(paligemma_variant="gemma_2b_lora", action_expert_variant="gemma_300m_lora"),
         data=LeRobotOpenArmDataConfig(
-            repo_id="S3_PiggyArmDataset/put_the_tennis_ball_into_box_0116",                                                     # DATASET
+            repo_id="S3_PiggyArmDataset/put_the_tennis_ball_into_box_final",                                                    # DATASET
             base_config=DataConfig(prompt_from_task=True),
         ),
-        weight_loader=weight_loaders.CheckpointWeightLoader("checkpoints/pi0_openarm_lora_fine_tune/Put_tennis/6999/params"),   # CHECKPOINT：*/params
-        num_train_steps=10_000,                                                                                                 # STEP
+        weight_loader=weight_loaders.CheckpointWeightLoader("gs://openpi-assets/checkpoints/pi0_base/params"),                  # CHECKPOINT：*/params
+        num_train_steps=15_000,                                                                                                 # STEP
+        freeze_filter=pi0_config.Pi0Config(
+            paligemma_variant="gemma_2b_lora",
+            action_expert_variant="gemma_300m_lora",
+        ).get_freeze_filter(),
+        ema_decay=None,  # Turn off EMA for LoRA finetuning
+    ),
+
+    # Lora Fine-tune on OpenArm Env with our own Dataset
+    TrainConfig(
+        name="pi0_openarm_lora_fine_tune_fold_towel",
+        batch_size=16,                                                                                                          # BATCH_SIZE
+        resume=True,                                                                                                            # RESUME
+        model=pi0_config.Pi0Config(paligemma_variant="gemma_2b_lora", action_expert_variant="gemma_300m_lora", pi05=True),
+        data=LeRobotOpenArmDataConfig(
+            repo_id="S3_OpenArmDataset/fold_towel_0123",                                                                        # DATASET
+            base_config=DataConfig(prompt_from_task=True),
+        ),
+        weight_loader=weight_loaders.CheckpointWeightLoader("checkpoints/pi0_openarm_lora_fine_tune_fold_towel/Fold_Towel/9999/params"), # CHECKPOINT：*/params
+        num_train_steps=15_000,                                                                                                 # STEP
         freeze_filter=pi0_config.Pi0Config(
             paligemma_variant="gemma_2b_lora",
             action_expert_variant="gemma_300m_lora",
