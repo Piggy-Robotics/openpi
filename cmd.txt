@@ -1,0 +1,11 @@
+XLA_PYTHON_CLIENT_MEM_FRACTION=0.9 uv run scripts/train.py pi05_openarm_lora_fine_tune_hotel --exp-name=pi05_openarm_hotel
+
+nohup bash -c ' \
+export WANDB_API_KEY="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"; \
+XLA_PYTHON_CLIENT_MEM_FRACTION=0.9 uv run scripts/train.py pi05_openarm_lora_fine_tune_hotel --exp-name=pi05_openarm_hotel' > train.log 2>&1 &
+
+uv run scripts/serve_policy.py policy:checkpoint --policy.config=pi05_openarm_lora_fine_tune_hotel --policy.dir=checkpoints/pi05_openarm_lora_fine_tune_hotel/pi05_openarm_hotel/8000
+
+
+10800 0.01651
+11000 0.015542

@@ -560,9 +560,9 @@ class TrainConfig:
     num_train_steps: int = 30_000
 
     # How often (in steps) to log training metrics.
-    log_interval: int = 100
+    log_interval: int = 200
     # How often (in steps) to save checkpoints.
-    save_interval: int = 1000
+    save_interval: int = 2000
     # If set, any existing checkpoints matching step % keep_period == 0 will not be deleted.
     keep_period: int | None = 5000
 
@@ -1073,6 +1073,25 @@ _CONFIGS = [
         ),
         weight_loader=weight_loaders.CheckpointWeightLoader("checkpoints/pi0_openarm_lora_fine_tune_fold_towel/Fold_Towel/9999/params"), # CHECKPOINT：*/params
         num_train_steps=15_000,                                                                                                 # STEP
+        freeze_filter=pi0_config.Pi0Config(
+            paligemma_variant="gemma_2b_lora",
+            action_expert_variant="gemma_300m_lora",
+        ).get_freeze_filter(),
+        ema_decay=None,  # Turn off EMA for LoRA finetuning
+    ),
+
+    # Lora Fine-tune on OpenArm Env with our own Dataset
+    TrainConfig(
+        name="pi05_openarm_lora_fine_tune_hotel",
+        batch_size=16,                                                                                                          # BATCH_SIZE
+        resume=True,                                                                                                            # RESUME
+        model=pi0_config.Pi0Config(paligemma_variant="gemma_2b_lora", action_expert_variant="gemma_300m_lora", pi05=True),
+        data=LeRobotOpenArmDataConfig(
+            repo_id="S3_OpenArmDataset/hotel_1819",                                                                        # DATASET
+            base_config=DataConfig(prompt_from_task=True),
+        ),
+        weight_loader=weight_loaders.CheckpointWeightLoader("checkpoints/pi05_openarm_lora_fine_tune_hotel/pi05_openarm_hotel/10000/params"), # CHECKPOINT：*/params
+        num_train_steps=20_000,                                                                                                 # STEP
         freeze_filter=pi0_config.Pi0Config(
             paligemma_variant="gemma_2b_lora",
             action_expert_variant="gemma_300m_lora",

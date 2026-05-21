@@ -58,8 +58,8 @@ class OpenArmInputs(transforms.DataTransformFn):
 
         if "actions" in data:
             inputs["actions"] = np.asarray(data["actions"], dtype=np.float32)
-        if "prompt" in data:
-            inputs["prompt"] = data["prompt"]
+        
+        inputs["prompt"] = "Tidy up the table."
 
         return inputs
 
