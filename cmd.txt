@@ -6,6 +6,7 @@ XLA_PYTHON_CLIENT_MEM_FRACTION=0.9 uv run scripts/train.py pi05_openarm_lora_fin
 
 uv run scripts/serve_policy.py policy:checkpoint --policy.config=pi05_openarm_lora_fine_tune_hotel --policy.dir=checkpoints/pi05_openarm_lora_fine_tune_hotel/pi05_openarm_hotel/8000
 
-
-10800 0.01651
-11000 0.015542
+uv run examples/convert_jax_model_to_pytorch.py \
+    --checkpoint_dir checkpoints/pi05_openarm_lora_fine_tune_hotel/pi05_openarm_hotel/10000 \
+    --config_name pi05_openarm_lora_fine_tune_hotel \
+    --output_path checkpoints/pi05_openarm_lora_fine_tune_hotel/pi05_openarm_hotel_pytorch/10000
